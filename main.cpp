@@ -5,8 +5,16 @@
 #include <cmath>
 
 // Custom Dependencies
+#include "assets/cpp/typeClasses.h"
 #include "assets/cpp/objectClasses.h"
 #include "assets/cpp/mathCalc.h"
+#include "assets/cpp/typeParser.h"
+
+// Project setup for future reference: https://github.com/raysan5/raylib/wiki/Easy-Raylib-Setup-for-Windows-with-Visual-Studio
+
+void FixedUpdate() {
+
+}
 
 // Main Functions
 int main() {
@@ -14,22 +22,24 @@ int main() {
     const int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "Project Spud Shuttle");
+    int framesCounter = 0; 
 
     Player player;
     player.setAllParam(screenWidth/2.0f, screenHeight/2.0f, screenWidth, screenHeight, 6, 0, WHITE, (char *)"spud-1");
     player.cache();
 
-    Camera2D camera = { 0 };
-    camera.target = (Vector2){ player.posX + 20.0f, player.posY + 20.0f };
-    camera.offset = (Vector2){ screenWidth/2.0f, screenHeight/2.0f };
-    camera.rotation = 0.0f;
-    camera.zoom = 1.0f;
+    SSCamera mainCamera = { screenWidth/2, screenHeight/2, 0.0f, 1.0f, player.posX, player.posY };
 
     SetTargetFPS(60);
 
-    // Main game loop
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
+        framesCounter++;
+        if (((framesCounter/60)%2) == 1) {
+            FixedUpdate();
+            framesCounter = 0;
+        };
+
         Point2D mousePos = {GetMousePosition().x, GetMousePosition().y};
         Point2D playerPos = {player.posX, player.posY};
         player.rotation = findAngle2d(playerPos, mousePos);
@@ -45,8 +55,7 @@ int main() {
             player.draw();
 
             DrawFPS(10, 10);
-            const char *test = player.textureFull;
-            DrawText(test, 10, 40, 10, BLACK);
+            DrawText(player.textureFull.c_str(), 10, 40, 10, BLACK);
 
         EndDrawing();
     }

@@ -1,11 +1,30 @@
+#pragma once
+
 #include "typeParser.h"
+
+#include <string>
+#include <cstring>
 
 class SSCamera {
   public:
     int posX = 0;
     int posY = 0;
-    int rotation = 0;
+    float rotation = 0.0f;
+    float zoom = 1.0f;
     bool smooth = true;
+    Point2D target = { 0, 0 };
+    Camera2D camera = { 0 };
+    SSCamera(int pX, int pY, float rot, float z, int tX, int tY) {
+      posX = pX;
+      posY = pY;
+      rotation = rot;
+      zoom = z;
+      target = { tX, tY };
+      camera.target = { target.x + 20.0f, target.y + 20.0f };
+      camera.offset = { (float)posX, (float)posY };
+      camera.rotation = rotation;
+      camera.zoom = zoom;
+    }
 };
 
 class Player {
@@ -15,19 +34,13 @@ class Player {
     int frameCount = 6;
     int rotation = 0;
     Color tint = WHITE;
-    char *texture = (char *)"spud-1";
-    char *textureFull;
+    std::string texture = "spud-1";
+    std::string textureFull;
     Texture2D player;
     void cache() {
-      const char * textureComb[3] = {
-        fileLoc,
-        texture,
-        fileType
-      };
-      char * out;
-      const char *textureLoc = combineChar(out, textureComb);
-      textureFull = (char *)textureLoc;
-      player = LoadTexture(textureLoc);
+        std::string textureLoc = fileLoc + texture + fileType;
+        textureFull = textureLoc;
+        player = LoadTexture(textureLoc.c_str());
     };
     void draw() {
       int frameWidth = player.width/frameCount;
@@ -78,6 +91,6 @@ class Projectile {
 
     }
   protected:
-    char *fileLoc = (char *)"assets/sprites/projectiles/";
-    char *fileType = (char *)".png";
+      std::string fileLoc = "assets/sprites/projectiles/";
+      std::string fileType = ".png";
 };
